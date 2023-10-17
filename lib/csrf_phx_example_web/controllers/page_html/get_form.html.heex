@@ -1,0 +1,71 @@
+<script>
+  const hasError = <%= if Map.get(assigns, :error) != nil, do: true, else: false %>
+  const errorMessage = '<%= Map.get(assigns, :error, "") %>'
+
+  window.onload = function() {
+    const emailEl = document.querySelector('input[name="email"]')
+    let removeError = () => {}
+
+    if (hasError) {
+      removeError = addErrorElement()
+    }
+
+    if (emailEl) {
+      emailEl.addEventListener('input', (e) => {
+        if (e.target?.value && e.target.value.length > 0) {
+          if (hasError) {
+            emailEl.classList.remove('border-rose-500')
+            emailEl.classList.remove('focus:border-rose-500')
+            emailEl.classList.remove('focus:ring-rose-500')
+            removeError()
+          }
+        }  
+      })
+
+      if (hasError) {
+        emailEl.classList.add('border-rose-500')
+        emailEl.classList.add('focus:border-rose-500')
+        emailEl.classList.add('focus:ring-rose-500')
+      }
+    }
+  }
+
+  function addErrorElement() {
+    const errorContainer = document.querySelector('#error-container')
+
+    if (errorContainer) {
+      errorContainer.style.display = 'block'
+      const messageEl = document.createElement('span')
+      messageEl.innerText = errorMessage
+      messageEl.classList.add('text-rose-500')
+      messageEl.classList.add('font-semibold')
+      errorContainer.appendChild(messageEl)
+
+      return () => {
+        errorContainer.removeChild(messageEl)
+        errorContainer.style.display = 'none'
+      }
+    }
+
+    return () => {}
+  }
+</script>
+<div class="p-12 rounded-lg border border-slate-200 bg-slate-100 w-2/3">
+  <h2 class="text-2xl font-bold text-center">CsrfPlus Form Example</h2>
+  <h3 class="text-xl font-semibold text-center">Heex page</h3>
+  <.form for={@form} method="POST" class="flex flex-col gap-8 mt-8">
+    <input type="hidden" name="_csrf_token" value={assigns[:csrf_token] || ""} hidden />
+    <input type="email" name="email" placeholder="Email" value={@form.params["email"]} />
+    <div id="error-container" class="hidden"></div>
+    <div>
+      <%= Jason.encode!(@form.params) %>
+    </div>
+
+    <button
+      type="submit"
+      class="w-full rounded border border-sky-600 bg-sky-500 text-white px-2 py-3 hover:bg-sky-400"
+    >
+      Submit
+    </button>
+  </.form>
+</div>

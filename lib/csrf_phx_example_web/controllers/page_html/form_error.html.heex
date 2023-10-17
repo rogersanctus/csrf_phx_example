@@ -1,0 +1,12 @@
+<div class="text-center">
+  <h1 class="text-2xl">An error has occurred while processing your form.</h1>
+
+  <p class="text-lg mt-4 text-amber-600">
+    <strong>
+      ** CSRF: <%= @error.message %> **
+    </strong>
+  </p>
+  <p class="mt-8">
+    <a href={@form_path} class="text-sky-500 underline">Reload the form and try again</a>
+  </p>
+</div>
